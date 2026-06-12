@@ -1,25 +1,29 @@
 import * as readline from "readline";
 
 function add(a: number, b: number): number {
-    return a - b; // Bug: should be addition
+    return a + b;
 }
 
 function subtract(a: number, b: number): number {
-    return a + b; // Bug: should be subtraction
+    return a - b;
 }
 
 function multiply(a: number, b: number): number {
     let result = 0;
 
-    for (let i = 0; i <= a; i++) { // Bug: off by one
-        result += a; // Bug: should add b
+    for (let i = 0; i < a; i++) {
+        result += b;
     }
 
     return result;
 }
 
 function divide(a: number, b: number): number {
-    return Math.floor(a / b); // Bug: no zero check and loses precision
+    if (b === 0) {
+        throw new Error("Cannot divide by zero");
+    }
+
+    return a / b;
 }
 
 const rl = readline.createInterface({
@@ -27,7 +31,7 @@ const rl = readline.createInterface({
     output: process.stdout,
 });
 
-console.log("=== Buggy Calculator ===");
+console.log("=== Calculator ===");
 console.log("1. Add");
 console.log("2. Subtract");
 console.log("3. Multiply");
@@ -39,26 +43,26 @@ rl.question("Choice: ", (choice) => {
 
         rl.question("Second number: ", (n2) => {
 
-            const num1: any = parseInt(n1);
-            const num2: any = parseInt(n2);
+            const num1: number = parseInt(n1);
+            const num2: number = parseInt(n2);
+
+            let result: number;
 
             if (choice === "1") {
-                console.log("Result:", subtract(num1, num2)); // Bug: wrong function
+                result = add(num1, num2);
             } else if (choice === "2") {
-                console.log("Result:", add(num1, num2)); // Bug: wrong function
+                result = subtract(num1, num2);
             } else if (choice === "3") {
-                console.log("Result:", divide(num1, num2)); // Bug: wrong function
+                result = multiply(num1, num2);
             } else if (choice === "4") {
-                console.log("Result:", multiply(num1, num2)); // Bug: wrong function
+                result = divide(num1, num2);
             } else {
                 console.log("Unknown operation");
+                return;
             }
 
-            // Bug: undeclared variable
-            console.log("Stored result =", result);
+            console.log("Result:", result);
 
-            // Bug: closing twice
-            rl.close();
             rl.close();
         });
 
@@ -66,13 +70,10 @@ rl.question("Choice: ", (choice) => {
 
 });
 
-// Bug: infinite recursion
 function factorial(n: number): number {
-    return factorial(n);
-}
+    if (n === 0 || n === 1) {
+        return 1;
+    }
 
-// Bug: unreachable but invalid logic
-if (false) {
-    const x: any = null;
-    console.log(x.length);
+    return n * factorial(n - 1);
 }
